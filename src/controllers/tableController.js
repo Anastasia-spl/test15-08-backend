@@ -12,12 +12,14 @@ const { QueryError, ClientError } = require('../helpers/errors')
 const getTableController = async (req, res) => {
   const {
     page = 1,
-    limit = 20,
+    limit = 10,
   } = req.query; 
   const {
     paginatedResponse: itemsList,
+    totalItems,
+    totalPages
   } = await getTable({ page, limit });
-  res.json({ message: "success", itemsList});
+  res.json({ message: "success", itemsList, totalItems, totalPages});
 };
 
 const searchItemController = async (req, res) => {
@@ -25,8 +27,9 @@ const searchItemController = async (req, res) => {
     name,
     quantity,
     distance,
+    condition,
     page = 1,
-    limit = 20,
+    limit = 10,
   } = req.query; 
   if (!name && !quantity && !distance) {
     throw new QueryError('Provide a query string')
@@ -35,7 +38,7 @@ const searchItemController = async (req, res) => {
     paginatedResponse: itemsList,
     totalItems,
     totalPages
-  } = await searchItems({ name, quantity, distance, page, limit });
+  } = await searchItems({ name, quantity, distance, condition, page, limit });
   res.json({ message: "success", itemsList , totalItems , totalPages});
 };
 

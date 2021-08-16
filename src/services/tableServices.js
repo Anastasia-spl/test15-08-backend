@@ -1,26 +1,44 @@
 const { Tables } = require("../db/TableModel");
 
-const { WrongParametersError} = require("../helpers/errors");
+const { WrongParametersError , QueryError} = require("../helpers/errors");
 
 const getTable = async ({ page, limit, }) => {
   const typedLimit = limit > 100 ? 100 : limit;
   const skip = page > 1 ? page * limit - 1 : 0;
   
   const paginatedResponse = await Tables.find({}).select({ __v: 0 }).skip(skip).limit(typedLimit);
-  return { paginatedResponse };
+  const allItems = await Tables.find();
+  const totalItems = allItems.length;
+  const totalPages = totalItems < limit ? 1 : Math.ceil(totalItems / limit);
+
+  return { paginatedResponse, totalItems, totalPages };
 };
 
-const searchItems = async ({ name, quantity, distance, page, limit }) => { 
-   const typedLimit = limit > 100 ? 100 : limit;
+const searchItems = async ({ name, quantity, distance, condition, page, limit }) => {
+  const typedLimit = limit > 100 ? 100 : limit;
   const skip = page > 1 ? page * limit - 1 : 0;
-  const queryName = name ? "name" : quantity ? "quantity" : "distance";
-  let typedName;
+  let paginatedResponse;
+
   if (name) {
-    typedName = name.toLowerCase();
+    const typedName = name.toLowerCase();
+    paginatedResponse = await Tables.find({ name: typedName }).select({ __v: 0 }).skip(skip).limit(typedLimit);
   }
-  const queryValue = typedName || quantity || distance;
-  const paginatedResponse = await Tables.find({[queryName]: queryValue}).select({ __v: 0 }).skip(skip).limit(typedLimit);
-  const queriedItems = await Tables.find({ [queryName]: queryValue });
+
+  const typedCondition = condition === 'equal' ? '$eq' :  condition === 'more' ? "$gt" : "$lt";
+
+  if (quantity) {
+    paginatedResponse = await Tables.find({ quantity: { [typedCondition]: quantity } }).select({ __v: 0 }).skip(skip).limit(typedLimit)
+  }
+
+  if (distance) {
+    paginatedResponse = await Tables.find({ distance: { [typedCondition]: distance } }).select({ __v: 0 }).skip(skip).limit(typedLimit)
+  }
+
+  if (paginatedResponse.length === 0) {
+    throw new QueryError('No items found')
+  }
+  
+  const queriedItems = await Tables.find();
   const totalItems = queriedItems.length;
   const totalPages = totalItems < limit ? 1 : Math.ceil(totalItems / limit);
   return { paginatedResponse, totalItems, totalPages };
