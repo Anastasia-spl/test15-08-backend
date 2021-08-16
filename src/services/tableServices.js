@@ -1,4 +1,4 @@
-const { Tables } = require("../db/TableModel");
+const { Tables } = require("../db/tableModel");
 
 const { WrongParametersError , QueryError} = require("../helpers/errors");
 
