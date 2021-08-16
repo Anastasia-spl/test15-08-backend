@@ -22,9 +22,8 @@ const searchItems = async ({ name, quantity, distance, condition, page, limit })
   let paginatedResponse;
 
   if (name) {
-    const typedName = name.toLowerCase();
-    response = await Tables.find({ name: typedName });
-    paginatedResponse = await Tables.find({ name: typedName }).select({ __v: 0 }).skip(skip).limit(typedLimit);
+    response = await Tables.find({ name: { "$regex": `(.*)${name}(.*)?`, "$options": ["i", "x"] } });
+    paginatedResponse = await Tables.find({ name: { "$regex": `(.*)${name}(.*)?`, "$options": ["i", "x"] } }).skip(skip).limit(typedLimit);
   }
 
   const typedCondition = condition === 'equal' ? '$eq' :  condition === 'more' ? "$gt" : "$lt";
