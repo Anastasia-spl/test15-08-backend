@@ -31,9 +31,11 @@ const searchItemController = async (req, res) => {
     page = 1,
     limit = 10,
   } = req.query; 
+  
   if (!name && !quantity && !distance) {
     throw new QueryError('Provide a query string')
   }
+  
   const {
     paginatedResponse: itemsList,
     totalItems,
