@@ -17,6 +17,9 @@ const tableSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Set distance"],
   },
+  webhook: {
+    type: Object
+  }
 });
 
 const Tables = mongoose.model("Tables", tableSchema);
