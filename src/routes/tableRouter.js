@@ -9,11 +9,13 @@ const {
   searchItemController,
   addItemController,
   deleteItemController,
+  webhookController
 } = require("../controllers/tableController");
 
 router.get("/", asyncWrapper(getTableController));
 router.get("/search", asyncWrapper(searchItemController));
 router.post("/",addItemValidation , asyncWrapper(addItemController));
 router.delete("/:id", asyncWrapper(deleteItemController));
+router.post("/testwebhook", asyncWrapper(webhookController))
 
 module.exports = { tableRouter: router };

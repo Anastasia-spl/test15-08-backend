@@ -68,9 +68,14 @@ const deleteItemController = async (req, res) => {
   res.json({ message: `Item has been successfully deleted` });
 };
 
+const webhookController = async (req, res) => {
+  res.json({ message: `webhookinfo`,  info: req.body});
+};
+
 module.exports = {
   getTableController,
   searchItemController,
   addItemController,
   deleteItemController,
+  webhookController
 };
