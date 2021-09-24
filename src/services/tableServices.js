@@ -1,4 +1,4 @@
-const { Tables } = require("../db/TableModel");
+const { Tables } = require("../db/tableModel");
 
 const { WrongParametersError , QueryError} = require("../helpers/errors");
 
@@ -22,19 +22,28 @@ const searchItems = async ({ name, quantity, distance, condition, page, limit })
   let paginatedResponse;
 
   if (name) {
-    const typedName = name.toLowerCase();
-    response = await Tables.find({ name: typedName });
-    paginatedResponse = await Tables.find({ name: typedName }).select({ __v: 0 }).skip(skip).limit(typedLimit);
+    response = await Tables.find({ name: { "$regex": `(.*)${name}(.*)?`, "$options": ["i", "x"] } });
+    paginatedResponse = await Tables.find({ name: { "$regex": `(.*)${name}(.*)?`, "$options": ["i", "x"] } }).select({ __v: 0 }).skip(skip).limit(typedLimit);
   }
 
-  const typedCondition = condition === 'equal' ? '$eq' :  condition === 'more' ? "$gt" : "$lt";
+  const typedCondition = condition === 'equal' ? '$eq' : condition === 'more' ? "$gt" : "$lt";
+
+  // if (!Number(quantity) || !Number(distance)) {
+  //   throw new QueryError('Please provide a number');
+  // }
 
   if (quantity) {
+    if (!Number(quantity)) {
+      throw new QueryError('Please provide a number');
+    }
     response = await Tables.find({ quantity: { [typedCondition]: quantity } });
     paginatedResponse = await Tables.find({ quantity: { [typedCondition]: quantity } }).select({ __v: 0 }).skip(skip).limit(typedLimit)
   }
 
   if (distance) {
+    if (!Number(distance)) {
+      throw new QueryError('Please provide a number');
+    }
     response = await Tables.find({ distance: { [typedCondition]: distance } });
     paginatedResponse = await Tables.find({ distance: { [typedCondition]: distance } }).select({ __v: 0 }).skip(skip).limit(typedLimit)
   }

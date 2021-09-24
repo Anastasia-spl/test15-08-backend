@@ -31,9 +31,11 @@ const searchItemController = async (req, res) => {
     page = 1,
     limit = 10,
   } = req.query; 
+  
   if (!name && !quantity && !distance) {
     throw new QueryError('Provide a query string')
   }
+  
   const {
     paginatedResponse: itemsList,
     totalItems,
@@ -66,9 +68,14 @@ const deleteItemController = async (req, res) => {
   res.json({ message: `Item has been successfully deleted` });
 };
 
+const webhookController = async (req, res) => {
+  res.json({ message: `webhookinfo`,  info: req.body});
+};
+
 module.exports = {
   getTableController,
   searchItemController,
   addItemController,
   deleteItemController,
+  webhookController
 };
