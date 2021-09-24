@@ -5,6 +5,7 @@ const {
   searchItems,
   addItem,
   deleteItem,
+  addWebhookInfo
 } = require("../services/tableServices");
 
 const { QueryError, ClientError } = require('../helpers/errors')
@@ -69,6 +70,7 @@ const deleteItemController = async (req, res) => {
 };
 
 const webhookController = async (req, res) => {
+  await addWebhookInfo(req.body);
   res.json({ message: `webhookinfo`,  info: req.body});
 };
 

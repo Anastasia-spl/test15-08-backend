@@ -71,9 +71,15 @@ const deleteItem = async ({ itemId }) => {
   }
 };
 
+const addWebhookInfo = async (webhookinfo) => {
+  const info = new Tables({webhook: webhookinfo})
+  await info.save();
+};
+
 module.exports = {
   getTable,
   searchItems,
   addItem,
   deleteItem,
+  addWebhookInfo
 };
