@@ -70,8 +70,8 @@ const deleteItemController = async (req, res) => {
 };
 
 const webhookController = async (req, res) => {
-  await addWebhookInfo(req.body);
-  res.json({ message: `webhookinfo`,  info: req.body});
+  const info = await addWebhookInfo(req.body);
+  res.json({ message: `succuss`,  info});
 };
 
 module.exports = {

@@ -1,4 +1,5 @@
 const { Tables } = require("../db/tableModel");
+const { Hooks } = require("../db/webhookModel");
 
 const { WrongParametersError , QueryError} = require("../helpers/errors");
 
@@ -72,8 +73,9 @@ const deleteItem = async ({ itemId }) => {
 };
 
 const addWebhookInfo = async (webhookinfo) => {
-  const info = new Tables({webhook: webhookinfo})
+  const info = new Hooks({webhook: webhookinfo})
   await info.save();
+  return info
 };
 
 module.exports = {
